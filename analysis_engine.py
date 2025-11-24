@@ -9,23 +9,16 @@ import datetime
 TOP_STOCKS = [
     "2330.TW", "2317.TW", "2454.TW", "2308.TW", "2382.TW", # Tech Giants
     "2881.TW", "2882.TW", "2891.TW", "2886.TW", "2884.TW", # Financials
-# Sector Definitions
-SECTOR_MAP = {
-    "全部 (All)": [], # Will be filled dynamically or handled as special case
-    "ETF": ["0050.TW", "0056.TW", "00878.TW", "00929.TW", "00919.TW", "006208.TW", "00713.TW", "00940.TW"],
-    "半導體 (Semi)": ["2330.TW", "2454.TW", "2303.TW", "3711.TW", "3034.TW"],
-    "AI 伺服器 (AI)": ["2382.TW", "3231.TW", "2356.TW", "6669.TW", "2317.TW"],
-    "記憶體 (Memory)": ["2408.TW", "8299.TW", "3260.TW", "2344.TW"], # Nanya, Phison, Adata, Winbond
-    "封測 (Packaging)": ["2311.TW", "3711.TW", "6239.TW", "8150.TW"], # ASE, PTI, ChipMOS
-    "航運 (Shipping)": ["2603.TW", "2609.TW", "2615.TW", "2618.TW", "2610.TW"],
-    "傳統產業 (Trad)": ["1101.TW", "1301.TW", "1303.TW", "2002.TW", "1216.TW"],
-    "金融 (Finance)": ["2881.TW", "2882.TW", "2886.TW", "2891.TW", "5880.TW"]
-}
-
-# Flatten all stocks for default "All" list
-TOP_STOCKS = list(set([stock for stocks in SECTOR_MAP.values() for stock in stocks]))
-
-# ... (rest of imports and functions)
+TOP_STOCKS = [
+    "2330.TW", "2317.TW", "2454.TW", "2308.TW", "2382.TW",  # Tech Giants
+    "2881.TW", "2882.TW", "2891.TW", "2886.TW", "2884.TW",  # Financials
+    "1301.TW", "1303.TW", "2002.TW", "1101.TW", "1216.TW",  # Traditional
+    "2603.TW", "2609.TW", "2615.TW", "2618.TW", "2610.TW",  # Shipping
+    "3008.TW", "3045.TW", "2412.TW", "2357.TW", "3231.TW",  # Others
+    "2353.TW", "2324.TW", "2303.TW", "3711.TW", "6669.TW",
+    "0050.TW", "0056.TW", "00878.TW", "00929.TW", "00919.TW",  # ETFs
+    "006208.TW", "00713.TW", "00940.TW"
+]
 
 def process_ticker(ticker, mode):
     """
@@ -102,34 +95,26 @@ def process_ticker(ticker, mode):
         return None
     return None
 
-def get_stock_recommendations(mode, sector="全部 (All)"):
+def get_stock_recommendations(mode):
     """
-    Scans the stocks based on sector and returns the top picks.
+    Scans the TOP_STOCKS list and returns the top picks for the given mode.
+    Uses parallel processing for speed.
     """
     recommendations = []
     
-    # Determine target list
-    if sector == "全部 (All)":
-        target_list = TOP_STOCKS
-    else:
-        target_list = SECTOR_MAP.get(sector, [])
-        
-    if not target_list: return []
-    
     # Use ThreadPoolExecutor for parallel fetching
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        # Submit all tasks
-        future_to_ticker = {executor.submit(process_ticker, ticker, mode): ticker for ticker in target_list}
+        future_to_ticker = {executor.submit(process_ticker, ticker, mode): ticker for ticker in TOP_STOCKS}
         
         for future in concurrent.futures.as_completed(future_to_ticker):
             result = future.result()
             if result:
                 recommendations.append(result)
                 
-    # Sort by score (descending)
+    # Sort by score
     recommendations.sort(key=lambda x: x['score'], reverse=True)
     
-    return recommendations[:10] # Return top 10 to accommodate more sectors
+    return recommendations[:5]
 
 def analyze_short_term(df, inst_df):
     """
