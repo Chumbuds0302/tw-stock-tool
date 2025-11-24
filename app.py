@@ -147,9 +147,18 @@ if st.sidebar.button("🤖 智能診斷 (AI Analysis)"):
         st.sidebar.warning("請先輸入股票代號")
 
 # Recommendation Button
-if st.sidebar.button("🌟 每日精選推薦 (Daily Picks)"):
+st.sidebar.markdown("---")
+st.sidebar.subheader("每日精選推薦 (Daily Picks)")
+
+# Sector Selector
+sector_options = list(analysis_engine.SECTOR_MAP.keys())
+selected_sector = st.sidebar.selectbox("選擇類股 (Sector)", sector_options, index=0)
+
+if st.sidebar.button("🌟 開始掃描 (Scan)"):
     st.session_state['show_recommendation'] = True
     st.session_state['show_analysis'] = False
+    st.session_state['selected_sector'] = selected_sector
+    st.rerun()
 
 st.sidebar.markdown("---")
 
@@ -157,12 +166,13 @@ st.sidebar.markdown("---")
 
 # 1. Recommendation View
 if st.session_state.get('show_recommendation', False):
-    st.title("🌟 每日精選推薦 (Daily Picks)")
-    st.markdown(f"針對 **{mode}** 策略，從熱門股中篩選出的潛力標的：")
+    selected_sector = st.session_state.get('selected_sector', '全部 (All)')
+    st.title(f"🌟 每日精選推薦 - {selected_sector}")
+    st.markdown(f"針對 **{mode}** 策略，從 **{selected_sector}** 中篩選出的潛力標的：")
     
     with st.spinner("正在掃描市場資料 (Scanning Market)... 這可能需要一點時間"):
         rec_mode = "Short-term" if "Short-term" in mode else "Long-term"
-        picks = analysis_engine.get_stock_recommendations(rec_mode)
+        picks = analysis_engine.get_stock_recommendations(rec_mode, selected_sector)
         
         if picks:
             for p in picks:
