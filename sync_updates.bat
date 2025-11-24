@@ -20,7 +20,7 @@ if "%commit_msg%"=="" set commit_msg="Update by Antigravity"
 git commit -m "%commit_msg%"
 
 echo Pushing to GitHub...
-git push
+git push -u origin main
 
 echo ========================================================
 echo  Done! Streamlit Cloud will auto-update in ~1-2 mins.
