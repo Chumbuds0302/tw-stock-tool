@@ -5,10 +5,6 @@ import data_manager
 import datetime
 
 # --- Constants ---
-# Top 50 Market Cap / Volume Stocks (Simplified List for Demo)
-TOP_STOCKS = [
-    "2330.TW", "2317.TW", "2454.TW", "2308.TW", "2382.TW", # Tech Giants
-    "2881.TW", "2882.TW", "2891.TW", "2886.TW", "2884.TW", # Financials
 TOP_STOCKS = [
     "2330.TW", "2317.TW", "2454.TW", "2308.TW", "2382.TW",  # Tech Giants
     "2881.TW", "2882.TW", "2891.TW", "2886.TW", "2884.TW",  # Financials
@@ -19,6 +15,7 @@ TOP_STOCKS = [
     "0050.TW", "0056.TW", "00878.TW", "00929.TW", "00919.TW",  # ETFs
     "006208.TW", "00713.TW", "00940.TW"
 ]
+
 
 def process_ticker(ticker, mode):
     """
