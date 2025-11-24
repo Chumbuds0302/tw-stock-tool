@@ -34,3 +34,14 @@
 pip install -r requirements.txt
 streamlit run app.py
 ```
+
+## 如何即時更新網站 (How to Update)
+
+當您請 Antigravity 修改完程式碼後，只需要執行以下步驟即可更新公開網站：
+
+1.  在資料夾中找到 **`sync_updates.bat`** 檔案。
+2.  **點擊兩下**執行它。
+3.  輸入更新備註 (例如 "update") 並按下 Enter。
+4.  等待視窗跑完並自動關閉。
+5.  Streamlit Cloud 會在 **1-2 分鐘內** 自動偵測並更新您的網站。
+
