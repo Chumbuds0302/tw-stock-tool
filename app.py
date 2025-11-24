@@ -146,33 +146,6 @@ mode = st.sidebar.radio("📊 分析模式 (Mode)", ["短期操作 (Short-term)"
 
 st.sidebar.markdown("---")
 
-# AI Advice Button (Current Stock)
-if st.sidebar.button("🤖 智能診斷 (AI Analysis)"):
-    if st.session_state['ticker']:
-        st.session_state['show_analysis'] = True
-        st.session_state['show_recommendation'] = False
-    else:
-        st.sidebar.warning("請先輸入股票代號")
-
-# Recommendation Button (Screener)
-if st.sidebar.button("🌟 每日精選推薦 (Daily Picks)"):
-    st.session_state['show_recommendation'] = True
-    st.session_state['show_analysis'] = False
-
-st.sidebar.markdown("---")
-
-# 1. Recommendation View
-if st.session_state.get('show_recommendation', False):
-    st.title("🌟 每日精選推薦 (Daily Picks)")
-    st.markdown(f"針對 **{mode}** 策略，從熱門股中篩選出的潛力標的：")
-    
-    with st.spinner("正在掃描市場資料 (Scanning Market)... 這可能需要一點時間"):
-        rec_mode = "Short-term" if "Short-term" in mode else "Long-term"
-        picks = analysis_engine.get_stock_recommendations(rec_mode)
-        
-        if picks:
-            for p in picks:
-                with st.expander(f"🏆 {p['name']} ({p['ticker']}) - {p['signal']} (Score: {p['score']})"):
                     st.markdown(f"**股價 (Price):** {p['price']:.2f}")
                     st.markdown("**入選理由:**")
                     for r in p['reasons']:
