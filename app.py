@@ -127,6 +127,10 @@ if 'show_recommendation' not in st.session_state:
 if 'show_analysis' not in st.session_state:
     st.session_state['show_analysis'] = False
 
+# Initialize selected_sector for auto-loading recommendations on startup
+if 'selected_sector' not in st.session_state:
+    st.session_state['selected_sector'] = "全部 (All)"
+
 # Ticker input
 ticker_input = st.sidebar.text_input("🔍 搜尋代號或名稱 (Search)", key='ticker_input', value=st.session_state['ticker'])
 
@@ -134,7 +138,7 @@ if ticker_input != st.session_state['ticker']:
     st.session_state['ticker'] = ticker_input
 
 period = st.sidebar.selectbox("📅 資料期間 (Period)", ["3mo", "6mo", "1y", "2y", "5y"], index=1)
-mode = st.sidebar.radio("📊 分析模式 (Mode)", ["短期操作 (Short-term)", "長期投資 (Long-term)"])
+mode = st.sidebar.radio("📊 分析模式 (Mode)", ["短期操作 (Short-term)", "長期投資 (Long-term)"], index=1)
 
 st.sidebar.markdown("---")
 
@@ -146,15 +150,16 @@ if st.sidebar.button("🤖 智能診斷 (AI Analysis)"):
     else:
         st.sidebar.warning("請先輸入股票代號")
 
-# Recommendation Button
+# Recommendation Section in Sidebar
 st.sidebar.markdown("---")
 st.sidebar.subheader("每日精選推薦 (Daily Picks)")
 
-# Sector Selector
+# Sector Selector - auto-scan on change
 sector_options = list(analysis_engine.SECTOR_MAP.keys())
 selected_sector = st.sidebar.selectbox("選擇類股 (Sector)", sector_options, index=0)
 
-if st.sidebar.button("🌟 開始掃描 (Scan)"):
+# Auto-trigger scan when sector changes
+if selected_sector != st.session_state.get('selected_sector'):
     st.session_state['show_recommendation'] = True
     st.session_state['show_analysis'] = False
     st.session_state['selected_sector'] = selected_sector
@@ -172,12 +177,16 @@ if st.session_state.get('show_recommendation', False):
     
     with st.spinner("正在掃描市場資料 (Scanning Market)... 這可能需要一點時間"):
         rec_mode = "Short-term" if "Short-term" in mode else "Long-term"
-        picks = analysis_engine.get_stock_recommendations(rec_mode, selected_sector)
+        results = analysis_engine.get_stock_recommendations(rec_mode, selected_sector)
         
+        # Display Top Picks
+        picks = results.get('top_picks', [])
         if picks:
+            st.subheader("🏆 推薦買入 (Top Picks)")
             for p in picks:
-                with st.expander(f"🏆 {p['name']} ({p['ticker']}) - {p['signal']} (Score: {p['score']})"):
+                with st.expander(f"✅ {p['name']} ({p['ticker']}) - {p['signal']} (Score: {p['score']})"):
                     st.markdown(f"**股價 (Price):** {p['price']:.2f}")
+                    st.markdown(f"**建議週期:** {p.get('style', 'N/A')}")
                     st.markdown("**入選理由:**")
                     for r in p['reasons']:
                         st.markdown(f"- {r}")
@@ -187,7 +196,25 @@ if st.session_state.get('show_recommendation', False):
                         st.session_state['show_analysis'] = True
                         st.rerun()
         else:
-            st.warning("目前沒有符合高標準的推薦標的。")
+            st.info("目前沒有符合高標準的推薦標的。")
+        
+        # Display Warnings
+        warnings = results.get('warnings', [])
+        if warnings:
+            st.markdown("---")
+            st.subheader("⚠️ 警示觀望 (Warnings)")
+            st.caption("以下股票表現不佳或風險較高，建議謹慎評估：")
+            for p in warnings:
+                with st.expander(f"⛔ {p['name']} ({p['ticker']}) - {p['signal']} (Score: {p['score']})"):
+                    st.markdown(f"**股價 (Price):** {p['price']:.2f}")
+                    st.markdown("**警示原因:**")
+                    for r in p['reasons']:
+                        st.markdown(f"- {r}")
+                    if st.button(f"查看詳情 {p['ticker']}", key=f"warn_{p['ticker']}"):
+                        st.session_state['ticker'] = p['ticker']
+                        st.session_state['show_recommendation'] = False
+                        st.session_state['show_analysis'] = True
+                        st.rerun()
             
     if st.button("返回分析 (Back)"):
         st.session_state['show_recommendation'] = False

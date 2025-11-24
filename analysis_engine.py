@@ -6,27 +6,33 @@ import datetime
 
 # --- Constants ---
 TOP_STOCKS = [
-    "2330.TW", "2317.TW", "2454.TW", "2308.TW", "2382.TW",  # Tech Giants
-    "2881.TW", "2882.TW", "2891.TW", "2886.TW", "2884.TW",  # Financials
-    "1301.TW", "1303.TW", "2002.TW", "1101.TW", "1216.TW",  # Traditional
-    "2603.TW", "2609.TW", "2615.TW", "2618.TW", "2610.TW",  # Shipping
-    "3008.TW", "3045.TW", "2412.TW", "2357.TW", "3231.TW",  # Others
-    "2353.TW", "2324.TW", "2303.TW", "3711.TW", "6669.TW",
-    "0050.TW", "0056.TW", "00878.TW", "00929.TW", "00919.TW",  # ETFs
-    "006208.TW", "00713.TW", "00940.TW"
+    # Tech Giants
+    "2330.TW", "2317.TW", "2454.TW", "2308.TW", "2382.TW", "2412.TW", "3711.TW",
+    # Financials
+    "2881.TW", "2882.TW", "2891.TW", "2886.TW", "2884.TW", "2892.TW", "5880.TW", "2883.TW",
+    # Traditional
+    "1301.TW", "1303.TW", "2002.TW", "1101.TW", "1216.TW", "2207.TW", "1326.TW",
+    # Shipping
+    "2603.TW", "2609.TW", "2615.TW", "2618.TW", "2610.TW", "2606.TW", "5608.TW",
+    # Others
+    "3008.TW", "3045.TW", "2357.TW", "3231.TW", "2353.TW", "2324.TW", "2303.TW", "6669.TW",
+    "2356.TW", "2408.TW", "2344.TW", "2327.TW",
+    # ETFs (Market/High Dividend)
+    "0050.TW", "0056.TW", "00878.TW", "00929.TW", "00919.TW", "006208.TW", "00713.TW", "00940.TW",
+    "00692.TW", "00881.TW"
 ]
 
 # Sector-based grouping for filtering
 SECTOR_MAP = {
     "全部 (All)": TOP_STOCKS,
-    "ETF": ["0050.TW", "0056.TW", "00878.TW", "00929.TW", "00919.TW", "006208.TW", "00713.TW", "00940.TW"],
-    "半導體 (Semi)": ["2330.TW", "2454.TW", "2303.TW", "3711.TW", "3034.TW"],
-    "AI 伺服器 (AI)": ["2382.TW", "3231.TW", "2356.TW", "6669.TW", "2317.TW"],
-    "記憶體 (Memory)": ["2408.TW", "8299.TW", "3260.TW", "2344.TW"],
-    "封測 (Packaging)": ["2311.TW", "3711.TW", "6239.TW", "8150.TW"],
-    "航運 (Shipping)": ["2603.TW", "2609.TW", "2615.TW", "2618.TW", "2610.TW"],
-    "傳統產業 (Traditional)": ["1101.TW", "1301.TW", "1303.TW", "2002.TW", "1216.TW"],
-    "金融 (Finance)": ["2881.TW", "2882.TW", "2886.TW", "2891.TW", "5880.TW"]
+    "ETF": ["0050.TW", "0056.TW", "00878.TW", "00929.TW", "00919.TW", "006208.TW", "00713.TW", "00940.TW", "00692.TW", "00881.TW", "00900.TW", "00895.TW"],
+    "半導體 (Semi)": ["2330.TW", "2454.TW", "2303.TW", "3711.TW", "3034.TW", "2308.TW", "2379.TW", "3443.TW", "6446.TW"],
+    "AI 伺服器 (AI)": ["2382.TW", "3231.TW", "2356.TW", "6669.TW", "2317.TW", "3706.TW", "2324.TW", "4958.TW"],
+    "記憶體 (Memory)": ["2408.TW", "8299.TW", "3260.TW", "2344.TW", "2337.TW", "3450.TW"],
+    "封測 (Packaging)": ["2311.TW", "3711.TW", "6239.TW", "8150.TW", "2369.TW", "6121.TW", "3711.TW"],
+    "航運 (Shipping)": ["2603.TW", "2609.TW", "2615.TW", "2618.TW", "2610.TW", "2606.TW", "5608.TW", "2634.TW"],
+    "傳統產業 (Traditional)": ["1101.TW", "1301.TW", "1303.TW", "2002.TW", "1216.TW", "2207.TW", "1326.TW", "1402.TW"],
+    "金融 (Finance)": ["2881.TW", "2882.TW", "2886.TW", "2891.TW", "5880.TW", "2892.TW", "2883.TW", "2884.TW", "2885.TW"]
 }
 
 
@@ -107,7 +113,7 @@ def process_ticker(ticker, mode):
 
 def get_stock_recommendations(mode, sector="全部 (All)"):
     """
-    Scans stocks based on selected sector and returns top picks.
+    Scans stocks based on selected sector and returns top picks AND warnings.
     Uses parallel processing for speed.
     """
     recommendations = []
@@ -115,8 +121,8 @@ def get_stock_recommendations(mode, sector="全部 (All)"):
     # Get target list based on sector
     target_list = SECTOR_MAP.get(sector, TOP_STOCKS)
     
-    # Use ThreadPoolExecutor for parallel fetching
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    # Use ThreadPoolExecutor for parallel fetching with increased workers
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         future_to_ticker = {executor.submit(process_ticker, ticker, mode): ticker for ticker in target_list}
         
         for future in concurrent.futures.as_completed(future_to_ticker):
@@ -127,7 +133,15 @@ def get_stock_recommendations(mode, sector="全部 (All)"):
     # Sort by score
     recommendations.sort(key=lambda x: x['score'], reverse=True)
     
-    return recommendations[:5]
+    # Return both top picks and warnings
+    top_picks = [r for r in recommendations if r['score'] >= 3][:10]  # Top 10 good stocks
+    
+    # Warnings: low score (<=1) OR sell/wait signals
+    warnings = [r for r in recommendations if r['score'] <= 1 or 'Sell' in r.get('signal', '') or 'Wait' in r.get('signal', '')]
+    warnings.sort(key=lambda x: x['score'])  # Sort worst first
+    warnings = warnings[:5]  # Top 5 warnings
+    
+    return {'top_picks': top_picks, 'warnings': warnings}
 
 def analyze_short_term(df, inst_df):
     """
@@ -643,25 +657,3 @@ def process_ticker(ticker, mode):
         print(f"Skipping {ticker}: {e}")
         return None
     return None
-
-def get_stock_recommendations(mode):
-    """
-    Scans the TOP_STOCKS list and returns the top 5 picks for the given mode.
-    Uses parallel processing for speed.
-    """
-    recommendations = []
-    
-    # Use ThreadPoolExecutor for parallel fetching
-    # Max workers = 10 to avoid hitting rate limits too hard but speed up significantly
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        # Submit all tasks
-        future_to_ticker = {executor.submit(process_ticker, ticker, mode): ticker for ticker in TOP_STOCKS}
-        
-        for future in concurrent.futures.as_completed(future_to_ticker):
-            result = future.result()
-            if result:
-                recommendations.append(result)
-            
-    # Sort by score desc
-    recommendations.sort(key=lambda x: x['score'], reverse=True)
-    return recommendations[:5]

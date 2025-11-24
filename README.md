@@ -35,6 +35,8 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+執行後，請在瀏覽器開啟：**http://localhost:8501**
+
 ## 如何即時更新網站 (How to Update)
 
 當您請 Antigravity 修改完程式碼後，只需要執行以下步驟即可更新公開網站：
