@@ -35,7 +35,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-執行後，請在瀏覽器開啟：**http://localhost:8501**
+執行後，請在瀏覽器開啟：**http://localhost:8502**
 
 ## 如何即時更新網站 (How to Update)
 

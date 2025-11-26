@@ -147,8 +147,17 @@ if 'show_analysis' not in st.session_state:
 if 'selected_sector' not in st.session_state:
     st.session_state['selected_sector'] = "全部 (All)"
 
+# Handle pending ticker updates from buttons
+if 'pending_ticker_update' in st.session_state:
+    st.session_state['ticker'] = st.session_state['pending_ticker_update']
+    st.session_state['ticker_input'] = st.session_state['pending_ticker_update']
+    del st.session_state['pending_ticker_update']
+
 # Ticker input
-ticker_input = st.sidebar.text_input("🔍 搜尋代號或名稱 (Search)", key='ticker_input', value=st.session_state['ticker'])
+if 'ticker_input' not in st.session_state:
+    st.session_state['ticker_input'] = st.session_state.get('ticker', "")
+
+ticker_input = st.sidebar.text_input("🔍 搜尋代號或名稱 (Search)", key='ticker_input')
 
 if ticker_input != st.session_state['ticker']:
     st.session_state['ticker'] = ticker_input
@@ -214,7 +223,7 @@ if st.session_state.get('show_recommendation', False):
                         for r in p['reasons']:
                             st.markdown(f"- {r}")
                         if st.button(f"前往分析 {p['ticker']}", key=f"btn_{p['ticker']}"):
-                            st.session_state['ticker'] = p['ticker']
+                            st.session_state['pending_ticker_update'] = p['ticker']  # Set pending update
                             st.session_state['show_recommendation'] = False
                             st.session_state['show_analysis'] = True
                             st.rerun()
@@ -234,7 +243,7 @@ if st.session_state.get('show_recommendation', False):
                         for r in p['reasons']:
                             st.markdown(f"- {r}")
                         if st.button(f"查看詳情 {p['ticker']}", key=f"warn_{p['ticker']}"):
-                            st.session_state['ticker'] = p['ticker']
+                            st.session_state['pending_ticker_update'] = p['ticker']  # Set pending update
                             st.session_state['show_recommendation'] = False
                             st.session_state['show_analysis'] = True
                             st.rerun()
