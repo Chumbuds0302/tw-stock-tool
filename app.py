@@ -6,9 +6,25 @@ import data_manager
 import technical_analysis
 import fundamental_analysis
 import datetime
+import feedparser
 
 # --- Page Config ---
 st.set_page_config(page_title="TW Stock Analysis", layout="wide", page_icon="📈")
+
+# --- Disclaimer and Data Source ---
+st.markdown("""
+<div style='background: #1e2530; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #f85149;'>
+    <div style='font-size: 14px; font-weight: 600; color: #f85149; margin-bottom: 8px;'>
+        ⚠ 投資警語 (Investment Disclaimer)
+    </div>
+    <div style='font-size: 12px; color: #8b949e; line-height: 1.6;'>
+        本工具僅供參考，不構成任何投資建議。股票投資有風險，過去績效不代表未來表現。投資前請審慎評估自身風險承受能力，並諮詢專業理財顧問。
+    </div>
+    <div style='font-size: 11px; color: #6e7681; margin-top: 8px;'>
+        📊 <strong>資料來源：</strong>Yahoo Finance (yfinance)、台灣證券交易所 (TWSE) | 資料更新可能有延遲，請以官方公告為準
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # --- Custom CSS for Premium Look ---
 st.markdown("""
@@ -173,48 +189,83 @@ st.sidebar.markdown("---")
 if st.session_state.get('show_recommendation', False):
     selected_sector = st.session_state.get('selected_sector', '全部 (All)')
     st.title(f"🌟 每日精選推薦 - {selected_sector}")
-    st.markdown(f"針對 **{mode}** 策略，從 **{selected_sector}** 中篩選出的潛力標的：")
     
-    with st.spinner("正在掃描市場資料 (Scanning Market)... 這可能需要一點時間"):
-        rec_mode = "Short-term" if "Short-term" in mode else "Long-term"
-        results = analysis_engine.get_stock_recommendations(rec_mode, selected_sector)
-        
-        # Display Top Picks
-        picks = results.get('top_picks', [])
-        if picks:
-            st.subheader("🏆 推薦買入 (Top Picks)")
-            for p in picks:
-                with st.expander(f"✅ {p['name']} ({p['ticker']}) - {p['signal']} (Score: {p['score']})"):
-                    st.markdown(f"**股價 (Price):** {p['price']:.2f}")
-                    st.markdown(f"**建議週期:** {p.get('style', 'N/A')}")
-                    st.markdown("**入選理由:**")
-                    for r in p['reasons']:
-                        st.markdown(f"- {r}")
-                    if st.button(f"前往分析 {p['ticker']}", key=f"btn_{p['ticker']}"):
-                        st.session_state['ticker'] = p['ticker']
-                        st.session_state['show_recommendation'] = False
-                        st.session_state['show_analysis'] = True
-                        st.rerun()
-        else:
-            st.info("目前沒有符合高標準的推薦標的。")
-        
-        # Display Warnings
-        warnings = results.get('warnings', [])
-        if warnings:
-            st.markdown("---")
-            st.subheader("⚠️ 警示觀望 (Warnings)")
-            st.caption("以下股票表現不佳或風險較高，建議謹慎評估：")
-            for p in warnings:
-                with st.expander(f"⛔ {p['name']} ({p['ticker']}) - {p['signal']} (Score: {p['score']})"):
-                    st.markdown(f"**股價 (Price):** {p['price']:.2f}")
-                    st.markdown("**警示原因:**")
-                    for r in p['reasons']:
-                        st.markdown(f"- {r}")
-                    if st.button(f"查看詳情 {p['ticker']}", key=f"warn_{p['ticker']}"):
-                        st.session_state['ticker'] = p['ticker']
-                        st.session_state['show_recommendation'] = False
-                        st.session_state['show_analysis'] = True
-                        st.rerun()
+    # Info banner showing sector and mode
+    st.info(f"📍 選擇類股: **{selected_sector}** | 分析模式: **{mode}**")
+    
+    
+    # Create two column layout: recommendations + news
+    main_col, news_col = st.columns([7, 3])
+    
+    with main_col:
+        with st.spinner("正在掃描市場資料 (Scanning Market)... 這可能需要一點時間"):
+            rec_mode = "Short-term" if "Short-term" in mode else "Long-term"
+            results = analysis_engine.get_stock_recommendations(rec_mode, selected_sector)
+            
+            # Display Top Picks
+            picks = results.get('top_picks', [])
+            if picks:
+                st.subheader("🏆 推薦買入 (Top Picks)")
+                for p in picks:
+                    with st.expander(f"✅ {p['name']} ({p['ticker']}) - {p['signal']} (Score: {p['score']})"):
+                        st.markdown(f"**股價 (Price):** {p['price']:.2f}")
+                        st.markdown(f"**建議週期:** {p.get('style', 'N/A')}")
+                        st.markdown("**入選理由:**")
+                        for r in p['reasons']:
+                            st.markdown(f"- {r}")
+                        if st.button(f"前往分析 {p['ticker']}", key=f"btn_{p['ticker']}"):
+                            st.session_state['ticker'] = p['ticker']
+                            st.session_state['show_recommendation'] = False
+                            st.session_state['show_analysis'] = True
+                            st.rerun()
+            else:
+                st.info("目前沒有符合高標準的推薦標的。")
+            
+            # Display Warnings
+            warnings = results.get('warnings', [])
+            if warnings:
+                st.markdown("---")
+                st.subheader("⚠️ 警示觀望 (Warnings)")
+                st.caption("以下股票表現不佳或風險較高，建議謹慎評估：")
+                for p in warnings:
+                    with st.expander(f"⛔ {p['name']} ({p['ticker']}) - {p['signal']} (Score: {p['score']})"):
+                        st.markdown(f"**股價 (Price):** {p['price']:.2f}")
+                        st.markdown("**警示原因:**")
+                        for r in p['reasons']:
+                            st.markdown(f"- {r}")
+                        if st.button(f"查看詳情 {p['ticker']}", key=f"warn_{p['ticker']}"):
+                            st.session_state['ticker'] = p['ticker']
+                            st.session_state['show_recommendation'] = False
+                            st.session_state['show_analysis'] = True
+                            st.rerun()
+    
+    with news_col:
+        st.subheader("📰 財經熱門新聞")
+        try:
+            # Fetch Taiwan finance news
+            feed_url = "https://news.google.com/rss/search?q=台灣+財經+股市&hl=zh-TW&gl=TW&ceid=TW:zh-Hant"
+            feed = feedparser.parse(feed_url)
+            
+            for entry in feed.entries[:6]:  # Top 6 news
+                # Parse published date
+                pub_date = datetime.datetime(*entry.published_parsed[:6])
+                now = datetime.datetime.now()
+                time_diff = now - pub_date
+                
+                # Calculate relative time
+                if time_diff.total_seconds() < 3600:
+                    time_str = f"{int(time_diff.total_seconds() / 60)}分鐘前"
+                elif time_diff.total_seconds() < 86400:
+                    time_str = f"{int(time_diff.total_seconds() / 3600)}小時前"
+                else:
+                    time_str = f"{int(time_diff.days)}天前"
+                
+                with st.container():
+                    st.markdown(f"[{entry.title}]({entry.link})")
+                    st.caption(f"🕐 {time_str}")
+                    st.markdown("---")
+        except Exception as e:
+            st.warning("無法載入新聞")
             
     if st.button("返回分析 (Back)"):
         st.session_state['show_recommendation'] = False
