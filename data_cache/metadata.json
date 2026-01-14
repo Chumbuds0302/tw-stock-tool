@@ -1,0 +1,857 @@
+[
+  {
+    "ticker": "2892.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2002.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2412.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2891.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "5880.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2330.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "1216.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2882.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2207.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2615.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2610.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2606.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "6669.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "3008.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2303.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "3045.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "3231.TW",
+    "timestamp": "20260114_190021",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2327.TW",
+    "timestamp": "20260114_190022",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "00919.TW",
+    "timestamp": "20260114_190022",
+    "rows": 127,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits",
+      "Capital Gains"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "0050.TW",
+    "timestamp": "20260114_190022",
+    "rows": 127,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits",
+      "Capital Gains"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "00878.TW",
+    "timestamp": "20260114_190022",
+    "rows": 127,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits",
+      "Capital Gains"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "00692.TW",
+    "timestamp": "20260114_190022",
+    "rows": 127,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits",
+      "Capital Gains"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "00881.TW",
+    "timestamp": "20260114_190022",
+    "rows": 127,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits",
+      "Capital Gains"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2330.TW",
+    "timestamp": "20260114_190051",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2308.TW",
+    "timestamp": "20260114_190051",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "3711.TW",
+    "timestamp": "20260114_190051",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2884.TW",
+    "timestamp": "20260114_190051",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "5880.TW",
+    "timestamp": "20260114_190051",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "1216.TW",
+    "timestamp": "20260114_190051",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2891.TW",
+    "timestamp": "20260114_190051",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2317.TW",
+    "timestamp": "20260114_190051",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2002.TW",
+    "timestamp": "20260114_190051",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2207.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2603.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2609.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "1326.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2610.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "6669.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2353.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "3045.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2408.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2356.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "2327.TW",
+    "timestamp": "20260114_190052",
+    "rows": 126,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "0056.TW",
+    "timestamp": "20260114_190052",
+    "rows": 127,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits",
+      "Capital Gains"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "0050.TW",
+    "timestamp": "20260114_190052",
+    "rows": 127,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits",
+      "Capital Gains"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "00929.TW",
+    "timestamp": "20260114_190052",
+    "rows": 127,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits",
+      "Capital Gains"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  },
+  {
+    "ticker": "00713.TW",
+    "timestamp": "20260114_190052",
+    "rows": 127,
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Dividends",
+      "Stock Splits",
+      "Capital Gains"
+    ],
+    "date_range": {
+      "start": "2025-07-14 00:00:00+08:00",
+      "end": "2026-01-14 00:00:00+08:00"
+    }
+  }
+]]

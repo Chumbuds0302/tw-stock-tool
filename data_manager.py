@@ -1,15 +1,30 @@
+"""
+data_manager.py - Phase 1 DSS Data Layer
+
+Handles:
+- Universe building from tw_stocks.json (4-digit codes only)
+- OHLCV disk caching in parquet format
+- Stock data fetching with cache support
+"""
+
 import yfinance as yf
 import pandas as pd
 import json
 import os
-import requests
-import datetime
+import re
+from pathlib import Path
 
-# Load stock map
-STOCK_MAP_FILE = 'tw_stocks.json'
+# --- Paths ---
+DATA_DIR = Path("data")
+OHLCV_DIR = DATA_DIR / "ohlcv"
+UNIVERSE_PATH = DATA_DIR / "universe.parquet"
+STOCK_MAP_FILE = "tw_stocks.json"
+
+# --- Stock Map (Name -> Code) ---
 stock_map = {}
 
 def load_stock_map():
+    """Load stock name to code mapping from JSON."""
     global stock_map
     if os.path.exists(STOCK_MAP_FILE):
         try:
@@ -20,181 +35,246 @@ def load_stock_map():
 
 load_stock_map()
 
-def search_stock_by_name(query):
+
+# --- A) Universe Builder ---
+def build_universe(json_path=STOCK_MAP_FILE, out_path=UNIVERSE_PATH):
     """
-    Search for a stock ticker by Chinese name or code.
-    Returns the ticker with .TW suffix if found, else returns the original query.
-    """
-    query = query.strip()
+    Build universe.parquet from tw_stocks.json.
+    Filters for 4-digit codes only, excludes derivatives/warrants.
     
-    # If it's already a number, assume it's a code
-    if query.isdigit():
-        return f"{query}.TW"
+    Returns:
+        pd.DataFrame with schema: code, name_zh, ticker, market, is_etf, is_active
+    """
+    DATA_DIR.mkdir(exist_ok=True)
+    
+    # Load JSON
+    with open(json_path, 'r', encoding='utf-8') as f:
+        raw_map = json.load(f)
+    
+    # Filter for 4-digit codes only
+    pattern = re.compile(r'^\d{4}$')
+    records = []
+    
+    for name_zh, code in raw_map.items():
+        if pattern.match(str(code)):
+            records.append({
+                "code": str(code),
+                "name_zh": name_zh,
+                "ticker": f"{code}.TW",
+                "market": "AUTO",
+                "is_etf": str(code).startswith("00"),
+                "is_active": True
+            })
+    
+    df = pd.DataFrame(records)
+    df.to_parquet(out_path, index=False)
+    print(f"[Universe] Built {len(df)} stocks -> {out_path}")
+    return df
+
+
+def load_universe(path=UNIVERSE_PATH):
+    """Load universe from parquet. Returns None if not exists."""
+    if path.exists():
+        return pd.read_parquet(path)
+    return None
+
+
+# --- B) OHLCV Disk Caching ---
+def get_cache_paths(ticker):
+    """
+    Get cache file paths for a ticker.
+    
+    Returns:
+        dict with 'ohlcv' key pointing to parquet path
+    """
+    clean_ticker = ticker.replace(".", "_")
+    return {
+        "ohlcv": OHLCV_DIR / f"ticker={clean_ticker}.parquet"
+    }
+
+
+def fetch_stock_history(ticker, start=None, end=None, period="6mo", 
+                        use_cache=True, force_refresh=False):
+    """
+    Fetch OHLCV data with disk caching.
+    
+    Args:
+        ticker: Stock ticker (e.g., "2330" or "2330.TW")
+        start: Start date (optional, overrides period)
+        end: End date (optional)
+        period: yfinance period string (default "6mo")
+        use_cache: Whether to use disk cache
+        force_refresh: Force re-download even if cached
         
-    # Search in loaded stock map
-    if query in stock_map:
-        return f"{stock_map[query]}.TW"
-            
-    # Partial match
-    for name, code in stock_map.items():
-        if query in name and code.isdigit(): 
-            return f"{code}.TW"
+    Returns:
+        (df, stock_obj) - stock_obj may be None when loaded from cache
+    """
+    # Validate ticker
+    ticker = validate_ticker(ticker)
+    
+    # Ensure cache directory exists
+    OHLCV_DIR.mkdir(parents=True, exist_ok=True)
+    
+    cache_path = get_cache_paths(ticker)["ohlcv"]
+    
+    # Try cache first
+    if use_cache and not force_refresh and cache_path.exists():
+        try:
+            df = pd.read_parquet(cache_path)
+            df.index = pd.to_datetime(df.index)
+            df = df.sort_index()
+            return df, None  # No stock_obj from cache
+        except Exception as e:
+            print(f"[Cache] Error reading {cache_path}: {e}")
+    
+    # Fetch from yfinance
+    try:
+        stock = yf.Ticker(ticker)
+        
+        if start:
+            df = stock.history(start=start, end=end)
+        else:
+            df = stock.history(period=period)
+        
+        if df.empty:
+            # Try .TWO suffix for OTC stocks
+            if ticker.endswith(".TW"):
+                ticker_otc = ticker.replace(".TW", ".TWO")
+                stock = yf.Ticker(ticker_otc)
+                if start:
+                    df = stock.history(start=start, end=end)
+                else:
+                    df = stock.history(period=period)
+        
+        # Standardize columns
+        required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+        for col in required_cols:
+            if col not in df.columns:
+                df[col] = 0
+        
+        df = df[required_cols].sort_index()
+        
+        # Save to cache
+        if use_cache and not df.empty:
+            df.to_parquet(cache_path)
+        
+        return df, stock
+        
+    except Exception as e:
+        print(f"[Fetch] Error fetching {ticker}: {e}")
+        return pd.DataFrame(), None
 
-    return query
 
+def build_ohlcv_dataset(universe_path=UNIVERSE_PATH, start="2018-01-01", 
+                        end=None, max_tickers=None, force_refresh=False):
+    """
+    Batch download and cache OHLCV for universe.
+    Resumable - skips already cached tickers unless force_refresh.
+    
+    Args:
+        universe_path: Path to universe.parquet
+        start: Start date for historical data
+        end: End date (None = today)
+        max_tickers: Limit number of tickers (for testing)
+        force_refresh: Re-download even if cached
+        
+    Returns:
+        dict with 'success', 'failed', 'skipped' counts
+    """
+    universe = load_universe(universe_path)
+    if universe is None:
+        print("[OHLCV] No universe found. Run build_universe() first.")
+        return {"success": 0, "failed": 0, "skipped": 0}
+    
+    tickers = universe['ticker'].tolist()
+    if max_tickers:
+        tickers = tickers[:max_tickers]
+    
+    results = {"success": 0, "failed": 0, "skipped": 0}
+    
+    for i, ticker in enumerate(tickers):
+        cache_path = get_cache_paths(ticker)["ohlcv"]
+        
+        # Skip if cached and not forcing refresh
+        if cache_path.exists() and not force_refresh:
+            results["skipped"] += 1
+            continue
+        
+        try:
+            df, _ = fetch_stock_history(ticker, start=start, end=end, 
+                                        use_cache=True, force_refresh=force_refresh)
+            if not df.empty:
+                results["success"] += 1
+            else:
+                results["failed"] += 1
+        except Exception as e:
+            print(f"[OHLCV] Failed {ticker}: {e}")
+            results["failed"] += 1
+        
+        # Progress
+        if (i + 1) % 50 == 0:
+            print(f"[OHLCV] Progress: {i+1}/{len(tickers)}")
+    
+    print(f"[OHLCV] Done: {results}")
+    return results
+
+
+# --- Utility Functions ---
 def validate_ticker(ticker):
-    """
-    Ensures the ticker ends with .TW or .TWO for Taiwan stocks.
-    If input is not a number, try to search by name first.
-    """
+    """Ensure ticker has proper suffix."""
     ticker = ticker.strip()
     
-    # If it already has .TW or .TWO suffix, return as is
     if ticker.endswith(".TW") or ticker.endswith(".TWO"):
         return ticker
     
-    # If it's a number, we'll try .TW first (will be handled in fetch_stock_history)
     if ticker.isdigit():
         return f"{ticker}.TW"
     
-    # Try to search by name (Chinese or partial match)
+    # Search by name
     return search_stock_by_name(ticker)
 
+
+def search_stock_by_name(query):
+    """Search for ticker by Chinese name or code."""
+    query = query.strip()
+    
+    if query.isdigit():
+        return f"{query}.TW"
+    
+    if query in stock_map:
+        return f"{stock_map[query]}.TW"
+    
+    # Partial match
+    for name, code in stock_map.items():
+        if query in name and str(code).isdigit():
+            return f"{code}.TW"
+    
+    return query
+
+
 def get_stock_name(ticker):
-    """
-    Returns the Chinese name for a given ticker code.
-    """
+    """Get Chinese name for a ticker."""
     code = ticker.replace(".TW", "").replace(".TWO", "")
-    # Create reverse map if needed, or just search
-    # Since map is Name -> Code, we search for value == code
     for name, c in stock_map.items():
-        if c == code:
+        if str(c) == code:
             return name
-    return ticker # Return ticker if name not found
-    if not ticker.endswith(".TW") and ticker[:-3].isdigit(): # Handle case where user might input 2330.TW manually
-         pass # It is already fine
-    elif not ticker.endswith(".TW") and ticker.isdigit() == False:
-         # Try to search if it's a name
-         return search_stock_by_name(ticker)
-         
     return ticker
 
-def fetch_stock_history(ticker, period="1y"):
-    """
-    Fetches historical stock data.
-    Automatically tries .TWO suffix if .TW returns no data (for OTC stocks).
-    """
-    ticker = validate_ticker(ticker)
-    stock = yf.Ticker(ticker)
-    df = stock.history(period=period)
-    
-    # If no data and ticker ends with .TW, try .TWO (OTC market)
-    if df.empty and ticker.endswith(".TW"):
-        ticker_otc = ticker.replace(".TW", ".TWO")
-        stock = yf.Ticker(ticker_otc)
-        df = stock.history(period=period)
-        if not df.empty:
-            # Successfully found data with .TWO suffix
-            ticker = ticker_otc
-    
-    return df, stock
 
 def fetch_stock_info(ticker):
-    """
-    Fetches fundamental info.
-    Automatically tries .TWO suffix if .TW returns no data (for OTC stocks).
-    """
+    """Fetch basic stock info from yfinance."""
     ticker = validate_ticker(ticker)
-    stock = yf.Ticker(ticker)
-    info = stock.info
-    
-    # If no useful info and ticker ends with .TW, try .TWO (OTC market)
-    if (not info or info.get('regularMarketPrice') is None) and ticker.endswith(".TW"):
-        ticker_otc = ticker.replace(".TW", ".TWO")
-        stock = yf.Ticker(ticker_otc)
-        info_otc = stock.info
-        if info_otc and info_otc.get('regularMarketPrice') is not None:
-            info = info_otc
-    
-    return info
-
-def get_daily_inst_data(date_str):
-    """
-    Fetches the entire institutional investor data for a specific date from TWSE.
-    Returns a dictionary mapping stock code to data, or None if failed/no data.
-    """
-    url = f"https://www.twse.com.tw/rwd/zh/fund/T86?response=json&selectType=ALL&date={date_str}"
     try:
-        # Add a small delay to be polite to the server
-        # time.sleep(0.1) 
-        res = requests.get(url, timeout=10)
-        data = res.json()
+        stock = yf.Ticker(ticker)
+        info = stock.info
         
-        if data.get('stat') == 'OK':
-            daily_data = {}
-            for row in data['data']:
-                # row[0] is code
-                code = row[0]
-                daily_data[code] = {
-                    "Foreign": int(row[4].replace(',', '')),
-                    "Trust": int(row[10].replace(',', '')),
-                    "Dealer": int(row[11].replace(',', ''))
-                }
-            return daily_data
+        # Try .TWO if .TW fails
+        if (not info or info.get('regularMarketPrice') is None) and ticker.endswith(".TW"):
+            ticker_otc = ticker.replace(".TW", ".TWO")
+            stock = yf.Ticker(ticker_otc)
+            info = stock.info
+        
+        return info
     except Exception as e:
-        print(f"Error fetching institutional data for {date_str}: {e}")
-    return None
-
-def fetch_institutional_data_history(ticker, days=5):
-    """
-    This function is now a wrapper that logic will be moved to app.py to utilize st.cache_data.
-    However, for compatibility, we keep a version here but it won't be efficient without caching.
-    The app.py should call fetch_daily_institutional_data directly with caching.
-    """
-    pass # Logic moved to app.py for caching control
-
-def fetch_eps_data(stock_obj):
-    """
-    Fetches quarterly EPS data from yfinance stock object (last 2 years = 8 quarters).
-    """
-    try:
-        # Use quarterly_financials instead of annual financials
-        fin = stock_obj.quarterly_financials
-        if not fin.empty and 'Basic EPS' in fin.index:
-            eps_series = fin.loc['Basic EPS']
-            # Convert to dataframe and limit to 8 quarters (2 years)
-            eps_df = eps_series.reset_index().rename(columns={'index': 'Date', 'Basic EPS': 'EPS'})
-            # Sort by date descending and take first 8
-            eps_df = eps_df.sort_values('Date', ascending=False).head(8)
-            # Reverse to show chronologically
-            return eps_df.sort_values('Date', ascending=True)
-    except Exception as e:
-        print(f"Error fetching EPS: {e}")
-    return None
-
-def fetch_news(stock_obj):
-    """
-    Fetches news from yfinance stock object.
-    """
-    news_list = []
-    try:
-        raw_news = stock_obj.news
-        for item in raw_news:
-            content = item.get('content', {})
-            if not content: # Sometimes it's directly in item
-                 content = item
-            
-            title = content.get('title')
-            link = content.get('clickThroughUrl', {}).get('url')
-            
-            # Fallback for different yfinance versions/structures
-            if not title:
-                title = item.get('title')
-            if not link:
-                link = item.get('link')
-
-            if title and link:
-                news_list.append({"title": title, "link": link})
-    except Exception as e:
-        print(f"Error fetching news: {e}")
-    return news_list
+        print(f"[Info] Error: {e}")
+        return {}
