@@ -161,6 +161,10 @@ ticker_input = st.sidebar.text_input("🔍 搜尋代號或名稱 (Search)", key=
 
 if ticker_input != st.session_state['ticker']:
     st.session_state['ticker'] = ticker_input
+    # When user enters a ticker, navigate to analysis view
+    if ticker_input:  # Only navigate if ticker is not empty
+        st.session_state['show_recommendation'] = False
+        st.session_state['show_analysis'] = False  # Let the main view handle it
 
 period = st.sidebar.selectbox("📅 資料期間 (Period)", ["3mo", "6mo", "1y", "2y", "5y"], index=1)
 mode = st.sidebar.radio("📊 分析模式 (Mode)", ["短期操作 (Short-term)", "長期投資 (Long-term)"], index=1)
@@ -275,10 +279,6 @@ if st.session_state.get('show_recommendation', False):
                     st.markdown("---")
         except Exception as e:
             st.warning("無法載入新聞")
-            
-    if st.button("返回分析 (Back)"):
-        st.session_state['show_recommendation'] = False
-        st.rerun()
 
 # 2. Single Stock Analysis View
 elif ticker_input:

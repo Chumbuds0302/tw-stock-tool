@@ -1,3 +1,0 @@
-正在恢復到穩定版本...
-移除 Sector Selector 功能
-保留所有其他功能：KD、Beta、ETF、並行處理等

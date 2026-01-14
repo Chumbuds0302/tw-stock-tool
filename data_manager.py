@@ -44,17 +44,27 @@ def search_stock_by_name(query):
 
 def validate_ticker(ticker):
     """
-    Ensures the ticker ends with .TW for Taiwan stocks if it's a number.
+    Ensures the ticker ends with .TW or .TWO for Taiwan stocks.
+    If input is not a number, try to search by name first.
     """
+    ticker = ticker.strip()
+    
+    # If it already has .TW or .TWO suffix, return as is
+    if ticker.endswith(".TW") or ticker.endswith(".TWO"):
+        return ticker
+    
+    # If it's a number, we'll try .TW first (will be handled in fetch_stock_history)
     if ticker.isdigit():
         return f"{ticker}.TW"
-    return ticker
+    
+    # Try to search by name (Chinese or partial match)
+    return search_stock_by_name(ticker)
 
 def get_stock_name(ticker):
     """
     Returns the Chinese name for a given ticker code.
     """
-    code = ticker.replace(".TW", "")
+    code = ticker.replace(".TW", "").replace(".TWO", "")
     # Create reverse map if needed, or just search
     # Since map is Name -> Code, we search for value == code
     for name, c in stock_map.items():
@@ -72,19 +82,41 @@ def get_stock_name(ticker):
 def fetch_stock_history(ticker, period="1y"):
     """
     Fetches historical stock data.
+    Automatically tries .TWO suffix if .TW returns no data (for OTC stocks).
     """
     ticker = validate_ticker(ticker)
     stock = yf.Ticker(ticker)
     df = stock.history(period=period)
+    
+    # If no data and ticker ends with .TW, try .TWO (OTC market)
+    if df.empty and ticker.endswith(".TW"):
+        ticker_otc = ticker.replace(".TW", ".TWO")
+        stock = yf.Ticker(ticker_otc)
+        df = stock.history(period=period)
+        if not df.empty:
+            # Successfully found data with .TWO suffix
+            ticker = ticker_otc
+    
     return df, stock
 
 def fetch_stock_info(ticker):
     """
     Fetches fundamental info.
+    Automatically tries .TWO suffix if .TW returns no data (for OTC stocks).
     """
     ticker = validate_ticker(ticker)
     stock = yf.Ticker(ticker)
-    return stock.info
+    info = stock.info
+    
+    # If no useful info and ticker ends with .TW, try .TWO (OTC market)
+    if (not info or info.get('regularMarketPrice') is None) and ticker.endswith(".TW"):
+        ticker_otc = ticker.replace(".TW", ".TWO")
+        stock = yf.Ticker(ticker_otc)
+        info_otc = stock.info
+        if info_otc and info_otc.get('regularMarketPrice') is not None:
+            info = info_otc
+    
+    return info
 
 def get_daily_inst_data(date_str):
     """
